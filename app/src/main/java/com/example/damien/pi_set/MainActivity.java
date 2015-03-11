@@ -41,7 +41,7 @@ public class MainActivity extends ActionBarActivity {
        for(int i=0;i<3;i++){
            TableRow row=new TableRow(getApplicationContext());
            row.setWeightSum(4.0f);
-           row.setBackgroundColor(Color.BLUE);
+           row.setBackgroundColor(Color.BLACK);
            row.setLayoutParams(param);
            table.addView(row);
        }
