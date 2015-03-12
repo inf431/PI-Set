@@ -1,16 +1,19 @@
 package com.example.damien.pi_set;
 
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+import android.view.View.OnClickListener;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -59,6 +62,8 @@ public class MainActivity extends ActionBarActivity {
             ImageButton Card=new ImageButton(getApplicationContext());
             Card.setImageDrawable(new CardDrawable(deck.pop()));
             Card.setLayoutParams(param2);
+            Card.setBackgroundColor(Color.WHITE);
+            Card.setOnClickListener(selectedListener);
             row.addView(Card);
             }
         }
@@ -66,6 +71,14 @@ public class MainActivity extends ActionBarActivity {
 
 
     }
+
+    private OnClickListener selectedListener = new OnClickListener(){
+        public void onClick(View v){
+
+
+        }
+    };
+
 
 
     @Override

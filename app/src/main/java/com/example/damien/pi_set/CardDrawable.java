@@ -31,7 +31,7 @@ class CardDrawable extends Drawable {
      * Whether the card is selected, or in the middle of a transition
      * (valid or invalid).
      */
-    private int selected;
+    private int selected=0;
 
     /**
      * The paint used internally to draw all parts of the card. It may
@@ -217,4 +217,13 @@ class CardDrawable extends Drawable {
     public void setColorFilter(ColorFilter cf) {
         paint.setColorFilter(cf);
     }
+
+    public void select() {
+        selected = (1-selected);
+    }
+
+    public int getSelected(){
+        return selected;
+    }
+
 }
