@@ -20,8 +20,62 @@ import java.util.LinkedList;
 
 
 public class MainActivity extends ActionBarActivity {
-    private LinkedList<Integer> deck;
     public int DECK_SIZE=81;
+    private LinkedList<Integer> deck;
+
+    //Deux champs pour mémoriser la sélection du joueur, ainsi que le nombre de cartes sélectionnées
+    //Le cas selection[i]=-1 correspond au cas où moins de 3 cartes sont sélectionnées
+    private int[] selection = new int[3];
+    private int numberOfSelectedCards=0;
+
+
+    //Gère la sélection d'une carte par le joueur
+    private OnClickListener selectedListener = new OnClickListener(){
+        public void onClick(View v){
+
+
+            ImageButton button = (ImageButton) v;
+            CardDrawable card = (CardDrawable) button.getDrawable();
+            int CardId = card.getCard();
+
+            if (!card.isSelected()&&numberOfSelectedCards<3) {
+                card.select();
+                button.setBackgroundColor(Color.BLACK);
+                addSelectedCard(CardId);
+                numberOfSelectedCards++;
+
+            }
+
+            else if(card.isSelected()&&numberOfSelectedCards>0){
+                card.select();
+                button.setBackgroundColor(Color.WHITE);
+                removeSelectedCard(CardId);
+                numberOfSelectedCards--;
+            }
+
+        assert (numberOfSelectedCards<=3&&numberOfSelectedCards>=0);
+        }
+    };
+
+    //Mémorise la sélection d'une carte
+    private void addSelectedCard (int card){
+        for(int i =0;i<3;i++){
+        if (selection[i]==-1) {
+            selection[i]=card;
+            break;
+        }
+        }
+    }
+
+    //Déselectionne une carte en mémoire
+    private void removeSelectedCard (int card){
+        for(int i =0;i<3;i++){
+            if (selection[i]==card) {
+                selection[i]=-1;
+                break;
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +122,14 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
+        //Initialisation des cartes sélectionnées (au début il n'y en a aucune)
+        for (int i=0;i<3;i++){
+            selection[i]=-1;
+        }
+
 
 
     }
-
-    private OnClickListener selectedListener = new OnClickListener(){
-        public void onClick(View v){
-
-
-        }
-    };
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

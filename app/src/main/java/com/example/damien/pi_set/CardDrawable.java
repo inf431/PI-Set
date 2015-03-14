@@ -31,7 +31,9 @@ class CardDrawable extends Drawable {
      * Whether the card is selected, or in the middle of a transition
      * (valid or invalid).
      */
-    private int selected=0;
+
+    //Boris : J'ai changé ce champ en boolean parce que je ne voyais pas l'intérêt d'un int ?
+    private boolean selected=false;
 
     /**
      * The paint used internally to draw all parts of the card. It may
@@ -219,10 +221,10 @@ class CardDrawable extends Drawable {
     }
 
     public void select() {
-        selected = (1-selected);
+        selected = !selected;
     }
 
-    public int getSelected(){
+    public boolean isSelected(){
         return selected;
     }
 
