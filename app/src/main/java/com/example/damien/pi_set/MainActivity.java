@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +32,8 @@ public class MainActivity extends ActionBarActivity {
     private int[] selection = new int[3];
     private ImageButton[] selectionViews = new ImageButton[3];
     private int numberOfSelectedCards=0;
+    private Button boutonTest;
+    private int score=0;
 
     //Gère la transition à effectuer lorsque 3 cartes sont sélectionnées
 
@@ -44,13 +47,17 @@ public class MainActivity extends ActionBarActivity {
             }
 
 
+
+
         for (int i = 0; i<3; i++){
 
             selectionViews[i].setBackgroundColor(Color.WHITE);
             removeSelectedCard(selection[i],selectionViews[i]);
         }
 
-        }
+     }
+
+
 
 
 
@@ -78,14 +85,41 @@ public class MainActivity extends ActionBarActivity {
 
         assert (numberOfSelectedCards<=3&&numberOfSelectedCards>=0);
 
-            if (numberOfSelectedCards ==3 ){
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+        }
+    };
+    private OnClickListener testListener = new OnClickListener(){
+        public void onClick(View v){
+
+        if(numberOfSelectedCards==3){
+           if(Cards.isSet(selection[0],selection[1],selection[2])){
+                score++;
+
+                TableRow.LayoutParams param2 = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+
+                for(int i=0;i<3;i++) {
+                    TableRow row = (TableRow) selectionViews[i].getParent();
+
+                    row.removeView(selectionViews[i]);
+                    if(!deck.isEmpty()) {
+                        ImageButton Card = new ImageButton(getApplicationContext());
+                        Card.setImageDrawable(new CardDrawable(deck.pop()));
+                        Card.setLayoutParams(param2);
+                        Card.setBackgroundColor(Color.WHITE);
+                        Card.setOnClickListener(selectedListener);
+                        row.addView(Card);
+                    }
+                    removeSelectedCard(selection[i],selectionViews[i]);
                 }
-                transition();
             }
+            else{
+               boutonTest.setText("Raté !");
+           }
+        }
+
+
         }
     };
 
@@ -175,6 +209,20 @@ public class MainActivity extends ActionBarActivity {
             selection[i]=-1;
             selectionViews[i]=null;
         }
+
+        // Creation du bouton de test des cartes.
+        boutonTest=new Button(this.getApplicationContext());
+        boutonTest.setText("Set ?");
+
+        boutonTest.setOnClickListener(testListener);
+
+        //Creation de la 4eme ligne
+        TableRow row=new TableRow(getApplicationContext());
+        row.setWeightSum(4.0f);
+        row.setBackgroundColor(Color.BLACK);
+        row.setLayoutParams(param);
+        row.addView(boutonTest);
+        table.addView(row);
 
 
     }
