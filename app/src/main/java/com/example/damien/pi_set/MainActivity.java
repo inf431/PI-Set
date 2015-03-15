@@ -2,6 +2,8 @@ package com.example.damien.pi_set;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -21,12 +23,36 @@ import java.util.LinkedList;
 
 public class MainActivity extends ActionBarActivity {
     public int DECK_SIZE=81;
+    //M'en sers pas pour l'instant
+    Handler handler = new Handler();
     private LinkedList<Integer> deck;
-
-    //Deux champs pour mémoriser la sélection du joueur, ainsi que le nombre de cartes sélectionnées
+    //Trois champs pour mémoriser la sélection du joueur, ainsi que le nombre de cartes sélectionnées
     //Le cas selection[i]=-1 correspond au cas où moins de 3 cartes sont sélectionnées
     private int[] selection = new int[3];
+    private ImageButton[] selectionViews = new ImageButton[3];
     private int numberOfSelectedCards=0;
+
+    //Gère la transition à effectuer lorsque 3 cartes sont sélectionnées
+
+    public void transition() {
+
+        int color = (Cards.isSet(selection[0], selection[1], selection[2]))? Color.GREEN : Color.RED;
+
+        for (int i = 0; i<3; i++){
+             selectionViews[i].setBackgroundColor(color);
+
+            }
+
+
+        for (int i = 0; i<3; i++){
+
+            selectionViews[i].setBackgroundColor(Color.WHITE);
+            removeSelectedCard(selection[i],selectionViews[i]);
+        }
+
+        }
+
+
 
 
     //Gère la sélection d'une carte par le joueur
@@ -39,41 +65,63 @@ public class MainActivity extends ActionBarActivity {
             int CardId = card.getCard();
 
             if (!card.isSelected()&&numberOfSelectedCards<3) {
-                card.select();
                 button.setBackgroundColor(Color.BLACK);
-                addSelectedCard(CardId);
-                numberOfSelectedCards++;
+                addSelectedCard(CardId,button);
 
             }
 
             else if(card.isSelected()&&numberOfSelectedCards>0){
-                card.select();
                 button.setBackgroundColor(Color.WHITE);
-                removeSelectedCard(CardId);
-                numberOfSelectedCards--;
+                removeSelectedCard(CardId, button);
+
             }
 
         assert (numberOfSelectedCards<=3&&numberOfSelectedCards>=0);
+
+            if (numberOfSelectedCards ==3 ){
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                transition();
+            }
         }
     };
 
     //Mémorise la sélection d'une carte
-    private void addSelectedCard (int card){
+    private void addSelectedCard (int card,ImageButton v){
+        ((CardDrawable) v.getDrawable()).select();
         for(int i =0;i<3;i++){
         if (selection[i]==-1) {
             selection[i]=card;
+            numberOfSelectedCards++;
             break;
         }
+        }
+        for(int i =0;i<3;i++){
+            if (selectionViews[i]==null) {
+                selectionViews[i]=v;
+                break;
+            }
         }
     }
 
     //Déselectionne une carte en mémoire
-    private void removeSelectedCard (int card){
-        for(int i =0;i<3;i++){
-            if (selection[i]==card) {
-                selection[i]=-1;
+    private void removeSelectedCard (int card, ImageButton v){
+        ((CardDrawable) v.getDrawable()).select();
+        for(int i =0;i<3;i++) {
+            if (selection[i] == card) {
+                selection[i] = -1;
+                numberOfSelectedCards--;
                 break;
             }
+        }
+            for(int i =0;i<3;i++){
+                if (selectionViews[i] != null && selectionViews[i].equals(v)) {
+                    selectionViews[i]=null;
+                    break;
+                }
         }
     }
 
@@ -125,8 +173,8 @@ public class MainActivity extends ActionBarActivity {
         //Initialisation des cartes sélectionnées (au début il n'y en a aucune)
         for (int i=0;i<3;i++){
             selection[i]=-1;
+            selectionViews[i]=null;
         }
-
 
 
     }
