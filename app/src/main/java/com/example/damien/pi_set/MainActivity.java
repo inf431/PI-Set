@@ -167,7 +167,7 @@ public class MainActivity extends ActionBarActivity {
         TableLayout table=(TableLayout)findViewById(R.id.tableLayout1);
 
         // Création et mélange du paquet de cartes
-        deck=new LinkedList<Integer>();
+        deck=new LinkedList<>();
         for(int i=0;i<DECK_SIZE;i++){
             deck.add(Cards.correctRange(i));
         }
