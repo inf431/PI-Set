@@ -2,6 +2,7 @@ package com.example.damien.pi_set;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -32,10 +34,13 @@ public class MainActivity extends ActionBarActivity {
     private int[] selection = new int[3];
     private ImageButton[] selectionViews = new ImageButton[3];
     private int numberOfSelectedCards=0;
+    private CardSet set;
+
     private Button boutonTest;
     private int score=0;
 
-    //Gère la transition à effectuer lorsque 3 cartes sont sélectionnées
+    //Je te laisse ecrire ça, sachant que son role se limitera a l'affichage du rouge/vert
+    // Le reste du travail est fait par le testListener
 
     public void transition() {
 
@@ -46,13 +51,10 @@ public class MainActivity extends ActionBarActivity {
 
             }
 
-
-
-
         for (int i = 0; i<3; i++){
 
             selectionViews[i].setBackgroundColor(Color.WHITE);
-            removeSelectedCard(selection[i],selectionViews[i]);
+
         }
 
      }
@@ -88,6 +90,12 @@ public class MainActivity extends ActionBarActivity {
 
         }
     };
+
+    //Gere l'appui sur le bouton Test
+    // Si on a un set, on supprime les 3 cartes et on en pioche de nouvelles.
+    //TODO : gérer le cas ou on avait 15 cartes et ou il faut redescendre a 12, et celui ou il faut rajouter 3 cartes
+
+
     private OnClickListener testListener = new OnClickListener(){
         public void onClick(View v){
 
@@ -103,6 +111,7 @@ public class MainActivity extends ActionBarActivity {
                     TableRow row = (TableRow) selectionViews[i].getParent();
 
                     row.removeView(selectionViews[i]);
+
                     if(!deck.isEmpty()) {
                         ImageButton Card = new ImageButton(getApplicationContext());
                         Card.setImageDrawable(new CardDrawable(deck.pop()));
@@ -210,20 +219,49 @@ public class MainActivity extends ActionBarActivity {
             selectionViews[i]=null;
         }
 
-        // Creation du bouton de test des cartes.
+        // Creation du bouton de test des cartes selectionnées
         boutonTest=new Button(this.getApplicationContext());
         boutonTest.setText("Set ?");
+        boutonTest.setLayoutParams(param2);
 
         boutonTest.setOnClickListener(testListener);
 
         //Creation de la 4eme ligne
+
         TableRow row=new TableRow(getApplicationContext());
         row.setWeightSum(4.0f);
         row.setBackgroundColor(Color.BLACK);
         row.setLayoutParams(param);
-        row.addView(boutonTest);
+
+        for(int i=0;i<3;i++){
+            ShapeDrawable shape=new ShapeDrawable();
+            shape.getPaint().setColor(Color.WHITE);
+            ImageView img=new ImageView(this.getApplicationContext());
+            img.setImageDrawable(shape);
+            img.setBackgroundColor(Color.WHITE);
+            img.setLayoutParams(param2);
+            row.addView(img,i);
+        }
+
+        row.addView(boutonTest,3);
+
         table.addView(row);
 
+    // On verifie qu'il existe bien un Set dans les cartes affichées
+        // sinon on affiche 3 cartes de plus
+
+        CardSet set=new CardSet(true,table);
+        if(!set.containsSet()){
+            for(int j=0;j<3;j++){
+                ImageButton Card=new ImageButton(getApplicationContext());
+                Card.setImageDrawable(new CardDrawable(deck.pop()));
+                Card.setLayoutParams(param2);
+                Card.setBackgroundColor(Color.WHITE);
+                Card.setOnClickListener(selectedListener);
+                row.removeView(row.getChildAt(j));
+                row.addView(Card,j);
+            }
+       }
 
     }
 

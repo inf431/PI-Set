@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 /**
  * A drawable graphical representation of a Set! card.
  */
+
 class CardDrawable extends Drawable {
     /**
      * Padding between shapes of a same card, as well as between
