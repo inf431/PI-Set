@@ -85,9 +85,7 @@ public class MainActivity extends ActionBarActivity {
 
             TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
 
-            for(int i =0;i<12;i++){
-                ((TableRow) table.getChildAt(i/3)).getChildAt(i % 4).invalidate();
-            }
+            table.invalidate();
         }
 
     };
