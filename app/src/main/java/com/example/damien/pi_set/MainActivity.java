@@ -3,6 +3,7 @@ package com.example.damien.pi_set;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
@@ -42,23 +43,64 @@ public class MainActivity extends ActionBarActivity {
     //Je te laisse ecrire ça, sachant que son role se limitera a l'affichage du rouge/vert
     // Le reste du travail est fait par le testListener
 
-    public void transition() {
+    public Runnable transition = new Runnable() {
+        public void run (){
 
-        int color = (Cards.isSet(selection[0], selection[1], selection[2]))? Color.GREEN : Color.RED;
+            int color = (Cards.isSet(selection[0], selection[1], selection[2])) ? Color.GREEN : Color.RED;
 
-        for (int i = 0; i<3; i++){
-             selectionViews[i].setBackgroundColor(color);
+            for (int i = 0; i < 3; i++) {
+                selectionViews[i].setBackgroundColor(color);
 
             }
 
-        for (int i = 0; i<3; i++){
-
-            selectionViews[i].setBackgroundColor(Color.WHITE);
 
         }
 
-     }
+    };
 
+    public Runnable newDeal = new Runnable(){
+        public void run (){
+            score++;
+
+            TableRow.LayoutParams param2 = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+
+
+            for(int i=0;i<3;i++) {
+                TableRow row = (TableRow) selectionViews[i].getParent();
+
+                row.removeView(selectionViews[i]);
+
+                if(!deck.isEmpty()) {
+                    ImageButton Card = new ImageButton(getApplicationContext());
+                    Card.setImageDrawable(new CardDrawable(deck.pop()));
+                    Card.setLayoutParams(param2);
+                    Card.setBackgroundColor(Color.WHITE);
+                    Card.setOnClickListener(selectedListener);
+                    row.addView(Card);
+                }
+                removeSelectedCard(selection[i],selectionViews[i]);
+            }
+
+            TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
+
+            for(int i =0;i<12;i++){
+                ((TableRow) table.getChildAt(i/3)).getChildAt(i % 4).invalidate();
+            }
+        }
+
+    };
+
+    public Runnable failUnSelect = new Runnable() {
+        public void run(){
+            for(int i =0;i<3;i++){
+                selectionViews[i].setBackgroundColor(Color.WHITE);
+                removeSelectedCard(selection[i],selectionViews[i]);
+            }
+
+        }
+    };
 
 
 
@@ -101,30 +143,18 @@ public class MainActivity extends ActionBarActivity {
 
         if(numberOfSelectedCards==3){
            if(Cards.isSet(selection[0],selection[1],selection[2])){
-                score++;
 
-                TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+               handler.post(transition);
+               handler.postDelayed(newDeal,500);
 
-                for(int i=0;i<3;i++) {
-                    TableRow row = (TableRow) selectionViews[i].getParent();
 
-                    row.removeView(selectionViews[i]);
-
-                    if(!deck.isEmpty()) {
-                        ImageButton Card = new ImageButton(getApplicationContext());
-                        Card.setImageDrawable(new CardDrawable(deck.pop()));
-                        Card.setLayoutParams(param2);
-                        Card.setBackgroundColor(Color.WHITE);
-                        Card.setOnClickListener(selectedListener);
-                        row.addView(Card);
-                    }
-                    removeSelectedCard(selection[i],selectionViews[i]);
-                }
             }
             else{
-               boutonTest.setText("Raté !");
+               handler.post(transition);
+               //boutonTest.setText("Raté !");
+               handler.postDelayed(failUnSelect,500);
+
+
            }
         }
 
