@@ -1,22 +1,16 @@
 package com.example.damien.pi_set;
 
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.view.View.OnClickListener;
@@ -36,12 +30,12 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton[] selectionViews = new ImageButton[3];
     private int numberOfSelectedCards=0;
     private CardSet set;
+    private int nCard;
 
     private Button boutonTest;
     private int score=0;
 
-    //Je te laisse ecrire ça, sachant que son role se limitera a l'affichage du rouge/vert
-    // Le reste du travail est fait par le testListener
+
 
     public Runnable transition = new Runnable() {
         public void run (){
@@ -58,34 +52,73 @@ public class MainActivity extends ActionBarActivity {
 
     };
 
+// Objet qui gère lorsqu'on a trouvé un Set
     public Runnable newDeal = new Runnable(){
         public void run (){
+
             score++;
+
+            TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
 
             TableRow.LayoutParams param2 = new TableRow.LayoutParams(
                     TableRow.LayoutParams.MATCH_PARENT,
                     TableRow.LayoutParams.MATCH_PARENT, 1.0f);
 
+            if(nCard==12) {
+                for (int i = 0; i < 3; i++) {
+                    TableRow row = (TableRow) selectionViews[i].getParent();
+                    row.removeView(selectionViews[i]);
 
-            for(int i=0;i<3;i++) {
-                TableRow row = (TableRow) selectionViews[i].getParent();
-
-                row.removeView(selectionViews[i]);
-
-                if(!deck.isEmpty()) {
-                    ImageButton Card = new ImageButton(getApplicationContext());
-                    Card.setImageDrawable(new CardDrawable(deck.pop()));
-                    Card.setLayoutParams(param2);
-                    Card.setBackgroundColor(Color.WHITE);
-                    Card.setOnClickListener(selectedListener);
-                    row.addView(Card);
+                    if (!deck.isEmpty()) {
+                        ImageButton Card = new ImageButton(getApplicationContext());
+                        Card.setImageDrawable(new CardDrawable(deck.pop()));
+                        Card.setLayoutParams(param2);
+                        Card.setBackgroundColor(Color.WHITE);
+                        Card.setOnClickListener(selectedListener);
+                        row.addView(Card);
+                    }
+                    removeSelectedCard(selection[i], selectionViews[i]);
                 }
-                removeSelectedCard(selection[i],selectionViews[i]);
+
             }
 
-            TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
+            else if(nCard==15){
+                TableRow row =(TableRow) table.getChildAt(3);
 
-            table.invalidate();
+
+
+
+                for(int i=0;i<3;i++){
+
+                    remplaceCartes(selection[i],((CardDrawable)((ImageButton) row.getChildAt(i)).getDrawable()).getCard(),table);
+
+                    row.removeView(row.getChildAt(i));
+
+                    //Creation d'une image blanche la ou on a supprimé les 3 cartes
+                    ImageView img=new ImageView(getApplicationContext());
+
+                    ShapeDrawable shape=new ShapeDrawable();
+                    shape.getPaint().setColor(Color.WHITE);
+                    img.setImageDrawable(shape);
+                    img.setBackgroundColor(Color.WHITE);
+                    img.setLayoutParams(param2);
+                    row.addView(img,i);
+
+                    removeSelectedCard(selection[i], selectionViews[i]);
+                }
+                row.invalidate();
+
+            }
+
+
+
+            // On vérifie qu'on a bien un set.
+            set.setN(12);
+            set.reload(table);
+            if(!set.containsSet())
+                ajoute3Cartes((TableRow) table.getChildAt(3));
+
+
         }
 
     };
@@ -132,9 +165,6 @@ public class MainActivity extends ActionBarActivity {
     };
 
     //Gere l'appui sur le bouton Test
-    // Si on a un set, on supprime les 3 cartes et on en pioche de nouvelles.
-    //TODO : gérer le cas ou on avait 15 cartes et ou il faut redescendre a 12, et celui ou il faut rajouter 3 cartes
-
 
     private OnClickListener testListener = new OnClickListener(){
         public void onClick(View v){
@@ -144,6 +174,22 @@ public class MainActivity extends ActionBarActivity {
 
                handler.post(transition);
                handler.postDelayed(newDeal,500);
+
+               handler.postDelayed(new Runnable() {
+                  public void run(){
+                      TableLayout table=(TableLayout) findViewById(R.id.tableLayout1);
+                      table.invalidate();
+                      for(int i=0;i<4;i++)
+                      {
+                          TableRow row=(TableRow) table.getChildAt(i);
+                          for(int j=0;j<4;j++)
+                          {
+                              row.getChildAt(j).invalidate();
+                          }
+                      }
+
+                  }
+               },1000);
 
 
             }
@@ -196,6 +242,51 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private void ajoute3Cartes(TableRow row){
+        nCard=15;
+
+            TableRow.LayoutParams param2 = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    TableRow.LayoutParams.MATCH_PARENT,1.0f);
+        for(int j=0;j<3;j++) {
+            if(!deck.isEmpty()) {
+                ImageButton Card = new ImageButton(getApplicationContext());
+                Card.setImageDrawable(new CardDrawable(deck.pop()));
+                Card.setLayoutParams(param2);
+                Card.setBackgroundColor(Color.WHITE);
+                Card.setOnClickListener(selectedListener);
+                row.removeView(row.getChildAt(j));
+                row.addView(Card, j);
+            }
+        }
+    }
+    //Remplacer la carte i par la carte j dans les 3 premieres lignes de la table
+    private void remplaceCartes(int i,int j, TableLayout table){
+        TableRow row;
+        TableRow.LayoutParams param2 = new TableRow.LayoutParams(
+                TableRow.LayoutParams.MATCH_PARENT,
+                TableRow.LayoutParams.MATCH_PARENT,1.0f);
+
+        for(int k=0;k<3;k++){
+            row=(TableRow)table.getChildAt(k);
+            for(int l=0;l<4;l++){
+                if(i==((CardDrawable)((ImageButton) row.getChildAt(l)).getDrawable()).getCard()){
+                    ImageButton Card = new ImageButton(getApplicationContext());
+                    row.removeView(row.getChildAt(l));
+                    Card.setImageDrawable(new CardDrawable(j));
+                    Card.setLayoutParams(param2);
+                    Card.setBackgroundColor(Color.WHITE);
+                    Card.setOnClickListener(selectedListener);
+
+                    row.addView(Card, l);
+                }
+
+            }
+
+
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +314,7 @@ public class MainActivity extends ActionBarActivity {
        }
 
         //Ajout de cartes aux lignes
+        nCard=12;
         TableRow.LayoutParams param2 = new TableRow.LayoutParams(
                 TableRow.LayoutParams.MATCH_PARENT,
                 TableRow.LayoutParams.MATCH_PARENT,1.0f);
@@ -278,17 +370,10 @@ public class MainActivity extends ActionBarActivity {
     // On verifie qu'il existe bien un Set dans les cartes affichées
         // sinon on affiche 3 cartes de plus
 
-        CardSet set=new CardSet(true,table);
+        set=new CardSet(true,table);
         if(!set.containsSet()){
-            for(int j=0;j<3;j++){
-                ImageButton Card=new ImageButton(getApplicationContext());
-                Card.setImageDrawable(new CardDrawable(deck.pop()));
-                Card.setLayoutParams(param2);
-                Card.setBackgroundColor(Color.WHITE);
-                Card.setOnClickListener(selectedListener);
-                row.removeView(row.getChildAt(j));
-                row.addView(Card,j);
-            }
+           ajoute3Cartes(row);
+
        }
 
     }

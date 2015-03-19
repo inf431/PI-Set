@@ -54,7 +54,7 @@ public class CardSet {
             cards[i]=-1;
         }
         // ! Ne fonctionne que tant qu'on a les cartes en 3 rangées de 4 avec eventuellement 3 de plus au debut de la quatrieme rangée
-        for(int i=0;i<nCard;i++){
+        for(int i=0;i<12;i++){
             cards[i]=((CardDrawable)((ImageButton)((TableRow) table.getChildAt(i / 4)).getChildAt(i % 4)).getDrawable()).getCard();
         }
     }
