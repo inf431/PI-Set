@@ -5,6 +5,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +38,9 @@ public class MainActivity extends ActionBarActivity {
     private Button boutonTest;
     private int score=0;
 
+    TextView scoreString;
+
+
 
 
     public Runnable transition = new Runnable() {
@@ -59,6 +63,8 @@ public class MainActivity extends ActionBarActivity {
         public void run (){
 
             score++;
+
+            scoreString.setText("Score : "+score);
 
             TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
 
@@ -296,6 +302,7 @@ public class MainActivity extends ActionBarActivity {
 
         TableLayout table=(TableLayout)findViewById(R.id.tableLayout1);
 
+
         // Création et mélange du paquet de cartes
         deck=new LinkedList<>();
         for(int i=0;i<DECK_SIZE;i++){
@@ -343,27 +350,24 @@ public class MainActivity extends ActionBarActivity {
 
         // Creation du bouton de test des cartes selectionnées
 
-        boutonTest=new Button(this.getApplicationContext());
-        boutonTest.setText("Set ?");
-        boutonTest.setLayoutParams(param2);
 
-        boutonTest.setOnClickListener(testListener);
-
-        TableRow button = new TableRow(getApplicationContext());
+        TableLayout button = new TableLayout(getApplicationContext());
         for(int i=0;i<3;i++){
             TableRow buttonRow=new TableRow(getApplicationContext());
             button.addView(buttonRow);
+            buttonRow.setGravity(Gravity.CENTER);
         }
         TextView setString= new TextView(getApplicationContext());
         setString.setText("Set ?");
-        //((TableRow)  button.getChildAt(0)).addView(setString);
-        ((TableRow)  button.getChildAt(0)).addView(boutonTest);
-        TextView scoreString = new TextView (getApplicationContext());
+        ((TableRow)  button.getChildAt(0)).addView(setString);
+        setString.setGravity(Gravity.CENTER);
+        scoreString = new TextView (getApplicationContext());
         scoreString.setText("Score : "+score);
+        scoreString.setGravity(Gravity.CENTER);
         ((TableRow)  button.getChildAt(1)).addView(scoreString);
         TextView timer = new TextView(getApplicationContext());
 
-       // button.setOnClickListener(testListener);
+        button.setOnClickListener(testListener);
         button.setLayoutParams(param2);
 
 
