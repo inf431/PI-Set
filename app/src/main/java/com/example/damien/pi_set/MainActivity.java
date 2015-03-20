@@ -11,9 +11,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -21,7 +23,7 @@ import java.util.LinkedList;
 
 public class MainActivity extends ActionBarActivity {
     public int DECK_SIZE=81;
-    //M'en sers pas pour l'instant
+
     Handler handler = new Handler();
     private LinkedList<Integer> deck;
     //Trois champs pour mémoriser la sélection du joueur, ainsi que le nombre de cartes sélectionnées
@@ -340,11 +342,33 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // Creation du bouton de test des cartes selectionnées
+
         boutonTest=new Button(this.getApplicationContext());
         boutonTest.setText("Set ?");
         boutonTest.setLayoutParams(param2);
 
         boutonTest.setOnClickListener(testListener);
+
+        TableRow button = new TableRow(getApplicationContext());
+        for(int i=0;i<3;i++){
+            TableRow buttonRow=new TableRow(getApplicationContext());
+            button.addView(buttonRow);
+        }
+        TextView setString= new TextView(getApplicationContext());
+        setString.setText("Set ?");
+        //((TableRow)  button.getChildAt(0)).addView(setString);
+        ((TableRow)  button.getChildAt(0)).addView(boutonTest);
+        TextView scoreString = new TextView (getApplicationContext());
+        scoreString.setText("Score : "+score);
+        ((TableRow)  button.getChildAt(1)).addView(scoreString);
+        TextView timer = new TextView(getApplicationContext());
+
+       // button.setOnClickListener(testListener);
+        button.setLayoutParams(param2);
+
+
+
+
 
         //Creation de la 4eme ligne
 
@@ -363,7 +387,9 @@ public class MainActivity extends ActionBarActivity {
             row.addView(img,i);
         }
 
-        row.addView(boutonTest,3);
+       // row.addView(boutonTest,3);
+
+        row.addView(button,3);
 
         table.addView(row);
 
