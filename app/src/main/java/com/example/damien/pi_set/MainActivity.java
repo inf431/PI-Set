@@ -25,7 +25,7 @@ import java.util.LinkedList;
 public class MainActivity extends ActionBarActivity {
     public int DECK_SIZE=81;
 
-    Handler handler = new Handler();
+    static Handler handler = new Handler();
     private LinkedList<Integer> deck;
     //Trois champs pour mémoriser la sélection du joueur, ainsi que le nombre de cartes sélectionnées
     //Le cas selection[i]=-1 correspond au cas où moins de 3 cartes sont sélectionnées
@@ -39,6 +39,9 @@ public class MainActivity extends ActionBarActivity {
     private int score=0;
 
     TextView scoreString;
+    static TextView timerTextView;
+
+
 
 
 
@@ -351,24 +354,27 @@ public class MainActivity extends ActionBarActivity {
         // Creation du bouton de test des cartes selectionnées
 
 
-        TableLayout button = new TableLayout(getApplicationContext());
+        TableLayout boutonTest = new TableLayout(getApplicationContext());
         for(int i=0;i<3;i++){
             TableRow buttonRow=new TableRow(getApplicationContext());
-            button.addView(buttonRow);
+            boutonTest.addView(buttonRow);
             buttonRow.setGravity(Gravity.CENTER);
         }
         TextView setString= new TextView(getApplicationContext());
         setString.setText("Set ?");
-        ((TableRow)  button.getChildAt(0)).addView(setString);
+        ((TableRow) boutonTest.getChildAt(0)).addView(setString);
         setString.setGravity(Gravity.CENTER);
         scoreString = new TextView (getApplicationContext());
         scoreString.setText("Score : "+score);
         scoreString.setGravity(Gravity.CENTER);
-        ((TableRow)  button.getChildAt(1)).addView(scoreString);
-        TextView timer = new TextView(getApplicationContext());
+        ((TableRow)  boutonTest.getChildAt(1)).addView(scoreString);
+        timerTextView = new TextView(getApplicationContext());
+        timerTextView.setText("0");
+        timerTextView.setGravity(Gravity.CENTER);
+        ((TableRow)  boutonTest.getChildAt(2)).addView(timerTextView);
 
-        button.setOnClickListener(testListener);
-        button.setLayoutParams(param2);
+        boutonTest.setOnClickListener(testListener);
+        boutonTest.setLayoutParams(param2);
 
 
 
@@ -393,7 +399,7 @@ public class MainActivity extends ActionBarActivity {
 
        // row.addView(boutonTest,3);
 
-        row.addView(button,3);
+        row.addView(boutonTest,3);
 
         table.addView(row);
 
@@ -406,7 +412,12 @@ public class MainActivity extends ActionBarActivity {
 
        }
 
+        Timer timer = new Timer (System.currentTimeMillis());
+        timer.start();
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
