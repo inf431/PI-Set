@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity {
             if(color==Color.GREEN) {
                 TableRow row = (TableRow) boutonTest.getChildAt(3);
                 TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
+                        0,
                         TableRow.LayoutParams.MATCH_PARENT, 1.0f);
                 row.removeAllViews();
                 for (int j = 0; j < 3; j++) {
@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
             TableLayout table = (TableLayout) findViewById (R.id.tableLayout1);
 
             TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
+                    0,
                     TableRow.LayoutParams.MATCH_PARENT, 1.0f);
 
             if(nCard==12) {
@@ -273,7 +273,7 @@ public class MainActivity extends ActionBarActivity {
         nCard=15;
 
             TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                    TableRow.LayoutParams.MATCH_PARENT,
+                    0,
                     TableRow.LayoutParams.MATCH_PARENT,1.0f);
         for(int j=0;j<3;j++) {
             if(!deck.isEmpty()) {
@@ -291,7 +291,7 @@ public class MainActivity extends ActionBarActivity {
     private void remplaceCartes(int i,int j, TableLayout table){
         TableRow row;
         TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
+                0,
                 TableRow.LayoutParams.MATCH_PARENT,1.0f);
 
         for(int k=0;k<3;k++){
@@ -332,7 +332,7 @@ public class MainActivity extends ActionBarActivity {
         // Ajout de lignes dans lesquels on affiche les cartes
         TableLayout.LayoutParams param = new TableLayout.LayoutParams(
                 TableLayout.LayoutParams.MATCH_PARENT,
-                TableLayout.LayoutParams.MATCH_PARENT, 1.0f);
+                0, 1.0f);
        for(int i=0;i<3;i++){
            TableRow row=new TableRow(getApplicationContext());
            row.setWeightSum(4.0f);
@@ -344,7 +344,7 @@ public class MainActivity extends ActionBarActivity {
         //Ajout de cartes aux lignes
         nCard=12;
         TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
+               0,
                 TableRow.LayoutParams.MATCH_PARENT,1.0f);
 
 
