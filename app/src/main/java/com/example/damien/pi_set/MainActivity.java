@@ -1,5 +1,6 @@
 package com.example.damien.pi_set;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
@@ -458,6 +459,10 @@ public class MainActivity extends ActionBarActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        if(id==R.id.server_settings){
+            Intent intent = new Intent(this, ServerActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
