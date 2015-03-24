@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -52,10 +53,12 @@ public class MainActivity extends ActionBarActivity {
 
             int color = (Cards.isSet(selection[0], selection[1], selection[2])) ? Color.GREEN : Color.RED;
 
+                // Ajout au bouton du dernier set attrapé
             if(color==Color.GREEN) {
                 TableRow row = (TableRow) boutonTest.getChildAt(3);
+                row.setWeightSum(3.0f);
                 TableRow.LayoutParams param2 = new TableRow.LayoutParams(
-                        0,
+                       0,
                         TableRow.LayoutParams.MATCH_PARENT, 1.0f);
                 row.removeAllViews();
                 for (int j = 0; j < 3; j++) {
@@ -64,8 +67,14 @@ public class MainActivity extends ActionBarActivity {
                     Card.setImageDrawable(selectionViews[j].getDrawable());
                     Card.setLayoutParams(param2);
                     Card.setBackgroundColor(Color.WHITE);
-                    row.addView(Card);
+                    Card.setPadding(1,1,1,1);
+                    row.addView(Card,j);
                 }
+
+                for (int j = 0; j < 3; j++) {
+                    row.getChildAt(j).invalidate();
+                }
+                row.invalidate();
             }
 
             for (int i = 0; i < 3; i++) {
@@ -203,21 +212,7 @@ public class MainActivity extends ActionBarActivity {
                handler.post(transition);
                handler.postDelayed(newDeal,500);
 
-               handler.postDelayed(new Runnable() {
-                  public void run(){
-                      TableLayout table=(TableLayout) findViewById(R.id.tableLayout1);
-                      table.invalidate();
-                      for(int i=0;i<4;i++)
-                      {
-                          TableRow row=(TableRow) table.getChildAt(i);
-                          for(int j=0;j<4;j++)
-                          {
-                              row.getChildAt(j).invalidate();
-                          }
-                      }
 
-                  }
-               },1000);
 
 
             }
@@ -371,11 +366,22 @@ public class MainActivity extends ActionBarActivity {
 
 
         boutonTest = new TableLayout(getApplicationContext());
-        for(int i=0;i<4;i++){
+        boutonTest.setWeightSum(6.0f);
+
+        for(int i=0;i<3;i++){
             TableRow buttonRow=new TableRow(getApplicationContext());
+            buttonRow.setLayoutParams(param);
             boutonTest.addView(buttonRow);
             buttonRow.setGravity(Gravity.CENTER);
         }
+            // La 4 eme ligne est crée avec un poids égal a celui des 3 autres
+            TableLayout.LayoutParams param3=new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT,
+                0, 3.0f);
+            TableRow buttonRow=new TableRow(getApplicationContext());
+            buttonRow.setLayoutParams(param3);
+            boutonTest.addView(buttonRow);
+            buttonRow.setGravity(Gravity.CENTER);
+
 
         TextView setString= new TextView(getApplicationContext());
         setString.setText("Set ?");
