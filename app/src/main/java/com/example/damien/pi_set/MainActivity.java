@@ -35,9 +35,10 @@ public class MainActivity extends ActionBarActivity {
     private CardSet set;
     private int nCard;
 
-    private Button boutonTest;
+  //  private Button boutonTest;
     private int score=0;
 
+    TableLayout boutonTest;
     TextView scoreString;
     static TextView timerTextView;
 
@@ -50,6 +51,22 @@ public class MainActivity extends ActionBarActivity {
         public void run (){
 
             int color = (Cards.isSet(selection[0], selection[1], selection[2])) ? Color.GREEN : Color.RED;
+
+            if(color==Color.GREEN) {
+                TableRow row = (TableRow) boutonTest.getChildAt(3);
+                TableRow.LayoutParams param2 = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.MATCH_PARENT, 1.0f);
+                row.removeAllViews();
+                for (int j = 0; j < 3; j++) {
+
+                    ImageButton Card=new ImageButton(getApplicationContext());
+                    Card.setImageDrawable(selectionViews[j].getDrawable());
+                    Card.setLayoutParams(param2);
+                    Card.setBackgroundColor(Color.WHITE);
+                    row.addView(Card);
+                }
+            }
 
             for (int i = 0; i < 3; i++) {
                 selectionViews[i].setBackgroundColor(color);
@@ -206,7 +223,6 @@ public class MainActivity extends ActionBarActivity {
             }
             else{
                handler.post(transition);
-               //boutonTest.setText("Raté !");
                handler.postDelayed(failUnSelect,500);
 
 
@@ -354,12 +370,13 @@ public class MainActivity extends ActionBarActivity {
         // Creation du bouton de test des cartes selectionnées
 
 
-        TableLayout boutonTest = new TableLayout(getApplicationContext());
-        for(int i=0;i<3;i++){
+        boutonTest = new TableLayout(getApplicationContext());
+        for(int i=0;i<4;i++){
             TableRow buttonRow=new TableRow(getApplicationContext());
             boutonTest.addView(buttonRow);
             buttonRow.setGravity(Gravity.CENTER);
         }
+
         TextView setString= new TextView(getApplicationContext());
         setString.setText("Set ?");
         ((TableRow) boutonTest.getChildAt(0)).addView(setString);
@@ -397,7 +414,6 @@ public class MainActivity extends ActionBarActivity {
             row.addView(img,i);
         }
 
-       // row.addView(boutonTest,3);
 
         row.addView(boutonTest,3);
 
