@@ -460,11 +460,17 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-        if(id==R.id.server_settings){
+        if (id == R.id.server_settings) {
             Intent intent = new Intent(this, ServerActivity.class);
             startActivity(intent);
+            return super.onOptionsItemSelected(item);
         }
-
+        if (id == R.id.client_settings) {
+            Intent intent = new Intent(this, ClientActivity.class);
+            startActivity(intent);
+            return super.onOptionsItemSelected(item);
+        }
         return super.onOptionsItemSelected(item);
     }
 }
+

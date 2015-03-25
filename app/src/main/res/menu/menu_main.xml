@@ -4,5 +4,7 @@
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/server_settings" android:title="Server mode"
-        android:orderInCategory="200" app:showAsAction="never" />
+    android:orderInCategory="200" app:showAsAction="never" />
+    <item android:id="@+id/client_settings" android:title="Client mode"
+        android:orderInCategory="300" app:showAsAction="never" />
 </menu>

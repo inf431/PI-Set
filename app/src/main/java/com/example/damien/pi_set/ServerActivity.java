@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -22,6 +23,16 @@ import java.net.SocketTimeoutException;
 import java.util.Enumeration;
 
 
+final class ConnectionList {
+    PrintWriter out;
+    String login;
+    ConnectionList tail;
+    ConnectionList(String l, PrintWriter h, ConnectionList tl){
+        login = l;
+        out = h;
+        tail = tl;
+    }
+}
 public class ServerActivity extends ActionBarActivity {
 
     private TextView serverStatus;
@@ -40,20 +51,23 @@ public class ServerActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_server);
 
-        serverStatus = (TextView) findViewById(R.id.server_status);
+        while(true) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_server);
 
-        SERVERIP = getLocalIpAddress();
+            serverStatus = (TextView) findViewById(R.id.server_status);
 
-        Thread fst = null;
-        try {
-            fst = new ServerThread();
-        } catch (IOException e) {
-            e.printStackTrace();
+            SERVERIP = getLocalIpAddress();
+
+            Thread fst = null;
+            try {
+                fst = new ServerThread();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            fst.start();
         }
-        fst.start();
     }
 
     public class ServerThread extends Thread {
