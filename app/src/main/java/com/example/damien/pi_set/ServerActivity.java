@@ -3,6 +3,7 @@ package com.example.damien.pi_set;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.widget.TextView;
 import java.io.DataInputStream;
@@ -123,17 +124,21 @@ public class ServerActivity extends ActionBarActivity {
     }
 
     // GETS THE IP ADDRESS OF YOUR PHONE'S NETWORK
-    private String getLocalIpAddress() {
+    public String getLocalIpAddress() {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
                 NetworkInterface intf = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) { return inetAddress.getHostAddress().toString(); }
+                    if (!inetAddress.isLoopbackAddress()) {
+                        String ip = Formatter.formatIpAddress(inetAddress.hashCode());
+                     //   Log.i(TAG, "***** IP="+ ip);
+                        return ip;
+                    }
                 }
             }
         } catch (SocketException ex) {
-            Log.e("ServerActivity", ex.toString());
+
         }
         return null;
     }
@@ -141,12 +146,7 @@ public class ServerActivity extends ActionBarActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        try {
-            // MAKE SURE YOU CLOSE THE SOCKET UPON EXITING
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
 }
