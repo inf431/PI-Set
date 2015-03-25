@@ -4,15 +4,10 @@ import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
-
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -51,13 +46,12 @@ public class ServerActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_server);
 
-        while(true) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_server);
+
 
             serverStatus = (TextView) findViewById(R.id.server_status);
-
             SERVERIP = getLocalIpAddress();
 
             Thread fst = null;
@@ -67,7 +61,7 @@ public class ServerActivity extends ActionBarActivity {
                 e.printStackTrace();
             }
             fst.start();
-        }
+
     }
 
     public class ServerThread extends Thread {
@@ -77,16 +71,15 @@ public class ServerActivity extends ActionBarActivity {
         public ServerThread() throws IOException {
             serverSocket = new ServerSocket(SERVERPORT);
 
-            serverSocket.setSoTimeout(10000);
         }
 
         public void run() {
             while (true) {
                 try {
-                    System.out.println("Waiting for client on port " +
-                            serverSocket.getLocalPort() + "...");
+                    serverStatus.setText("Waiting for client on port " +
+                            serverSocket.getLocalPort() + " on IP " + SERVERIP);
                     Socket server = serverSocket.accept();
-                    System.out.println("Just connected to "
+                    serverStatus.setText("Just connected to "
                             + server.getRemoteSocketAddress());
 
                     DataInputStream in =
@@ -97,9 +90,23 @@ public class ServerActivity extends ActionBarActivity {
 
                     out.writeUTF("Connection successful");
 
+                    String line;
                     while(true){
-                        // C'est ici qu'on peut agir comme on le veut.
-                        break;
+                        line=in.readLine();
+                        if(line.equals("STOP")){
+                            break;
+                        }
+                        else {
+                            final String message=new String(line);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    serverStatus.setText(message);
+                                }
+                            });
+                        }
+
+
                     }
 
                     server.close();
