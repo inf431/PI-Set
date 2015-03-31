@@ -40,6 +40,8 @@ public class MainActivity extends ActionBarActivity {
   //  private Button boutonTest;
     private int score=0;
 
+    static Timer timer = new Timer();
+
     TableLayout boutonTest;
     TextView scoreString;
     static TextView timerTextView;
@@ -435,7 +437,7 @@ public class MainActivity extends ActionBarActivity {
 
        }
 
-        Timer timer = new Timer (System.currentTimeMillis());
+    if(!timer.isAlive())
         timer.start();
 
     }

@@ -10,10 +10,6 @@ public class Timer extends Thread {
     long startTime = 0;
     Handler timerHandler = new Handler();
 
-    Timer (long startTime){
-        this.startTime= startTime;
-    }
-
     Runnable timerRunnable = new Runnable() {
 
 
@@ -31,6 +27,9 @@ public class Timer extends Thread {
 };
 
     public void run() {
+
+        startTime = System.currentTimeMillis();
+
         while (true){
             try {
                 this.sleep(500);
